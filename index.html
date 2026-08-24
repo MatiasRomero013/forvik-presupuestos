@@ -306,15 +306,17 @@ body{ font-family:'Poppins',sans-serif; font-weight:300; background:#e8e8e8; }
   .saved-name{ font-size:12px; }
 
   #preview-area{
-    margin-left:0; padding:10px 0 80px;
-    display:none; overflow-x:hidden; overflow-y:auto;
-    flex-direction:column; align-items:center; gap:10px;
-    background:#d8d8d8;
+    margin-left:0; padding:12px 0 80px;
+    display:none; overflow-x:auto; overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    flex-direction:column; align-items:flex-start; gap:12px;
+    background:#d0d0d0;
   }
   #preview-area.mob-on{ display:flex; }
   #preview-area .sheet{
-    zoom:0.45;
-    box-shadow:0 2px 12px rgba(0,0,0,.25);
+    zoom:0.62;
+    margin-left:8px;
+    box-shadow:0 2px 14px rgba(0,0,0,.3);
   }
 
   #mob-tabs{
