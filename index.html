@@ -314,7 +314,7 @@ body{ font-family:'Poppins',sans-serif; font-weight:300; background:#e8e8e8; }
   }
   #preview-area.mob-on{ display:flex; }
   #preview-area .sheet{
-    zoom:0.62;
+    zoom:0.56;
     margin-left:8px;
     box-shadow:0 2px 14px rgba(0,0,0,.3);
   }
@@ -434,6 +434,9 @@ body{ font-family:'Poppins',sans-serif; font-weight:300; background:#e8e8e8; }
     <button class="btn-add" onclick="addFin()">+ Agregar opción</button>
   </div>
 
+  <h3>Validez del presupuesto</h3>
+  <input id="eValidez" type="text" value="Presupuesto válido por 15 días." oninput="update()">
+
   <h3>Nota inferior</h3>
   <textarea id="eNota" oninput="update()">Los valores incluyen insumos, consumibles y materiales necesarios para la fabricación del portón.</textarea>
 
@@ -522,7 +525,7 @@ body{ font-family:'Poppins',sans-serif; font-weight:300; background:#e8e8e8; }
     <div class="footer-brand">
       <div>
         <div class="fb-name" id="footer-brand-1"><b>FORVIK</b> Metalúrgica</div>
-        <div class="fb-sub">Presupuesto válido por 15 días.</div>
+        <div class="fb-sub" id="fb-validez-1">Presupuesto válido por 15 días.</div>
       </div>
     </div>
   </div>
@@ -590,7 +593,7 @@ body{ font-family:'Poppins',sans-serif; font-weight:300; background:#e8e8e8; }
     <div class="footer-brand">
       <div>
         <div class="fb-name" id="footer-brand-2"><b>FORVIK</b> Metalúrgica</div>
-        <div class="fb-sub">Presupuesto válido por 15 días.</div>
+        <div class="fb-sub" id="fb-validez-2">Presupuesto válido por 15 días.</div>
       </div>
     </div>
   </div>
@@ -755,6 +758,7 @@ function update() {
   const fechaRaw      = document.getElementById('eFecha').value;
   const manoObra = parseFloat(document.getElementById('eManoObra').value) || 0;
   const nota     = document.getElementById('eNota').value;
+  const validez  = document.getElementById('eValidez').value;
 
   // Formatear fecha
   let fechaStr = fechaRaw;
@@ -795,6 +799,8 @@ function update() {
   setText('p2-total-exact', fmt(totalMat));
   setText('p2-total-round', fmt(matRedondo));
   setText('p2-nota', nota);
+  setText('fb-validez-1', validez);
+  setText('fb-validez-2', validez);
 
   // Filas de materiales hoja 2
   const tbody = document.getElementById('p2-mat-rows');
@@ -891,6 +897,7 @@ function buildData() {
     finOpts: JSON.parse(JSON.stringify(finOpts)),
     caract: [...caract],
     nota: document.getElementById('eNota').value,
+    validez: document.getElementById('eValidez').value,
     _label: [cliente, trabajo, fechaStr].filter(Boolean).join(' – '),
   };
 }
@@ -916,6 +923,7 @@ async function loadPresupuesto(id) {
   document.getElementById('eFecha').value         = d.fecha || '';
   document.getElementById('eManoObra').value      = d.manoObra || '';
   document.getElementById('eNota').value          = d.nota || '';
+  document.getElementById('eValidez').value       = d.validez !== undefined ? d.validez : 'Presupuesto válido por 15 días.';
   document.getElementById('eFinCheck').checked    = d.finCheck || false;
   finOpts = JSON.parse(JSON.stringify(d.finOpts || []));
   mats    = JSON.parse(JSON.stringify(d.mats || []));
