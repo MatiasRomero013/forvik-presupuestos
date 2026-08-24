@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=0.5, user-scalable=yes, minimum-scale=0.1, maximum-scale=5.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Forvik – Generador de Presupuestos</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
@@ -277,12 +277,31 @@ body{ font-family:'Poppins',sans-serif; font-weight:300; background:#e8e8e8; }
 #mob-tabs{ display:none; }
 
 @media (max-width:768px) {
-  body{ padding-bottom:60px; }
+  body{ padding-bottom:62px; overflow-x:hidden; }
 
   #editor{
-    position:relative; width:100%; height:auto;
-    min-height:0; padding:14px;
+    position:relative; width:100vw; height:auto;
+    min-height:100vh; padding:16px; gap:8px;
+    box-sizing:border-box;
   }
+  #editor h2{ font-size:14px; }
+  #editor h3{ font-size:11px; }
+  #editor label{ font-size:10px; }
+  #editor input, #editor textarea, #editor select{
+    font-size:14px; padding:9px 10px;
+  }
+
+  /* materiales: cantidad | nombre | precio | total | X */
+  .mat-header{ grid-template-columns:46px 1fr 82px 24px; }
+  .mat-header span:nth-child(3){ display:none; }
+  .mat-row{ grid-template-columns:46px 1fr 82px 24px; }
+  .mat-row input:nth-child(3){ display:none; }
+
+  .btn-add{ font-size:13px; padding:10px; }
+  .btn-save{ font-size:13px; padding:11px; }
+  .btn-pdf{ font-size:15px; padding:14px; }
+  .saved-row{ padding:9px 10px; }
+  .saved-name{ font-size:12px; }
 
   #preview-area{
     margin-left:0; padding:10px;
@@ -292,23 +311,19 @@ body{ font-family:'Poppins',sans-serif; font-weight:300; background:#e8e8e8; }
   }
   #preview-area.mob-on{ display:flex; }
 
-  .mat-header, .mat-row{
-    grid-template-columns:44px 1fr 80px 70px 20px;
-  }
-
   #mob-tabs{
     display:flex; position:fixed; bottom:0; left:0; right:0;
-    height:58px; background:#111; border-top:1px solid #333;
+    height:62px; background:#111; border-top:1px solid #333;
     z-index:500;
   }
   .mob-tab{
     flex:1; color:#666; border:none; background:none;
     font-family:'Poppins',sans-serif; font-size:9px; font-weight:600;
     cursor:pointer; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; gap:2px;
+    align-items:center; justify-content:center; gap:3px;
     text-transform:uppercase; letter-spacing:.4px;
   }
-  .mob-tab .mi{ font-size:18px; }
+  .mob-tab .mi{ font-size:20px; }
   .mob-tab.active{ color:#fff; }
   .mob-tab.active-red{ color:#e74c3c; }
 }
