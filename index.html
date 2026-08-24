@@ -958,35 +958,42 @@ async function generarPDF(modo) {
   btn.textContent = 'Generando...';
   btn.disabled = true;
 
-  // En mobile el preview puede estar oculto → lo movemos fuera de pantalla para que se renderice
-  const preview = document.getElementById('preview-area');
-  const savedCss = preview.getAttribute('style') || '';
-  preview.style.cssText = savedCss + ';display:flex!important;position:fixed!important;left:-9999px!important;top:0!important;visibility:hidden!important;pointer-events:none!important;';
-
-  // Esperar fuentes y layout
-  await document.fonts.ready;
-  await new Promise(r => setTimeout(r, 500));
-
+  const clones = [];
   try {
+    await document.fonts.ready;
+
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF('p', 'mm', 'a4');
     const W = 210, H = 297;
 
-    const sheets = [];
-    if (modo !== 'materiales') sheets.push(document.getElementById('sheet-presupuesto'));
-    if (modo !== 'presupuesto') sheets.push(document.getElementById('sheet-materiales'));
+    const srcIds = [];
+    if (modo !== 'materiales') srcIds.push('sheet-presupuesto');
+    if (modo !== 'presupuesto') srcIds.push('sheet-materiales');
 
-    for (let i = 0; i < sheets.length; i++) {
-      const canvas = await html2canvas(sheets[i], {
+    for (let i = 0; i < srcIds.length; i++) {
+      // Clonar la hoja directamente en <body> (evita heredar display:none del contenedor)
+      const src = document.getElementById(srcIds[i]);
+      const clone = src.cloneNode(true);
+      clone.style.cssText = 'position:fixed;top:0;left:-9999px;width:794px;min-height:1123px;background:#fff;z-index:0;';
+      document.body.appendChild(clone);
+      clones.push(clone);
+
+      // Pequeña pausa para que el browser pinte el clon
+      await new Promise(r => setTimeout(r, 300));
+
+      const canvas = await html2canvas(clone, {
         scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
         width: 794,
         height: 1123,
-        windowWidth: 1400,
         logging: false
       });
+
+      document.body.removeChild(clone);
+      clones.splice(clones.indexOf(clone), 1);
+
       const imgData = canvas.toDataURL('image/jpeg', 0.93);
       if (i > 0) pdf.addPage();
       pdf.addImage(imgData, 'JPEG', 0, 0, W, H);
@@ -1014,7 +1021,7 @@ async function generarPDF(modo) {
   } catch(e) {
     alert('Error al generar el PDF: ' + e.message);
   } finally {
-    preview.setAttribute('style', savedCss);
+    clones.forEach(c => { if (c.parentNode) c.parentNode.removeChild(c); });
     btn.textContent = '📄 Generar PDF';
     btn.disabled = false;
   }
