@@ -958,6 +958,15 @@ async function generarPDF(modo) {
   btn.textContent = 'Generando...';
   btn.disabled = true;
 
+  // En mobile el preview puede estar oculto → lo movemos fuera de pantalla para que se renderice
+  const preview = document.getElementById('preview-area');
+  const savedCss = preview.getAttribute('style') || '';
+  preview.style.cssText = savedCss + ';display:flex!important;position:fixed!important;left:-9999px!important;top:0!important;visibility:hidden!important;pointer-events:none!important;';
+
+  // Esperar fuentes y layout
+  await document.fonts.ready;
+  await new Promise(r => setTimeout(r, 500));
+
   try {
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF('p', 'mm', 'a4');
@@ -969,9 +978,16 @@ async function generarPDF(modo) {
 
     for (let i = 0; i < sheets.length; i++) {
       const canvas = await html2canvas(sheets[i], {
-        scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff'
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: 794,
+        height: 1123,
+        windowWidth: 1400,
+        logging: false
       });
-      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+      const imgData = canvas.toDataURL('image/jpeg', 0.93);
       if (i > 0) pdf.addPage();
       pdf.addImage(imgData, 'JPEG', 0, 0, W, H);
     }
@@ -980,7 +996,7 @@ async function generarPDF(modo) {
     const cliente = document.getElementById('eCliente').value;
     const filename = 'Forvik - ' + (trabajo || cliente || 'Presupuesto') + '.pdf';
 
-    // En mobile intentar compartir directo (WhatsApp, email, etc.)
+    // En mobile: compartir directo (WhatsApp, email, etc.)
     if (navigator.share) {
       try {
         const blob = pdf.output('blob');
@@ -989,17 +1005,16 @@ async function generarPDF(modo) {
           await navigator.share({ files: [file], title: filename });
           return;
         }
-      } catch(e) {
-        // Compartir cancelado o no soportado → descargar
-      }
+      } catch(e) { /* cancelado → descargar */ }
     }
 
-    // Desktop o fallback: descarga directa
+    // Desktop / fallback: descarga directa
     pdf.save(filename);
 
   } catch(e) {
     alert('Error al generar el PDF: ' + e.message);
   } finally {
+    preview.setAttribute('style', savedCss);
     btn.textContent = '📄 Generar PDF';
     btn.disabled = false;
   }
