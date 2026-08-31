@@ -293,11 +293,10 @@ body{ font-family:'Poppins',sans-serif; font-weight:300; background:#e8e8e8; }
     font-size:14px; padding:9px 10px;
   }
 
-  /* materiales: cantidad | nombre | precio | total | X */
-  .mat-header{ grid-template-columns:46px 1fr 82px 24px; }
-  .mat-header span:nth-child(3){ display:none; }
-  .mat-row{ grid-template-columns:46px 1fr 82px 24px; }
-  .mat-row input:nth-child(3){ display:none; }
+  /* materiales: cant | nombre | precio unit | total | X */
+  .mat-header{ grid-template-columns:40px 1fr 70px 56px 20px; font-size:9px; }
+  .mat-row{ grid-template-columns:40px 1fr 70px 56px 20px; }
+  .mat-row input{ font-size:12px; padding:5px 4px; }
 
   .btn-add{ font-size:13px; padding:10px; }
   .btn-save{ font-size:13px; padding:11px; }
